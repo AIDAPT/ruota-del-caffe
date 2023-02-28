@@ -1,10 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import Partecipants from "../components/Partecipants";
-import Wheel from "../components/Wheel";
+import {Wheel} from "../components/Wheel";
+import { StorageContextProvider } from "../contexts/StorageContext";
 
 export const MainPage = () => {
     return (
-        <Box>
+        <Box
+            alignItems="center"
+        >
             <Typography
                 component="div"
                 color="white"
@@ -22,8 +25,10 @@ export const MainPage = () => {
             >
                 Caffè
             </Typography>
-            <Wheel/>
-            <Partecipants/>
+            <StorageContextProvider>
+                <Wheel/>
+                <Partecipants/>
+            </StorageContextProvider>
         </Box>
     );
 }
