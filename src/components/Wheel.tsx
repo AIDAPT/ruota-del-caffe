@@ -3,11 +3,17 @@ import { ChartDataset } from 'chart.js';
 import 'chart.js/auto';
 import { useContext, useEffect, useState } from 'react';
 import {Pie} from 'react-chartjs-2'
-import { StorageContext } from '../contexts/StorageContext';
+import { StorageContext, StorageDataProps } from '../contexts/StorageContext';
 
 type WheelStateProps = {
   labels: string[],
   datasets: ChartDataset<"pie", number[]>[]
+}
+
+type TemporaryData = {
+  temporaryLabel: string,
+  temporaryData: number,
+  temporaryBackgroundColor: string
 }
 
 export function Wheel() {
@@ -19,19 +25,42 @@ export function Wheel() {
   })
 
   useEffect(() => {
-    let storageData = get();
+    let storageData: StorageDataProps = get().filter(p => p.isChecked)
+    let toShuffleData: TemporaryData[] = []
     let labels: string[] = []
     let data: number[] = []
     let backgroundColor: string[] = []
-    
-    storageData.forEach((person, index) => {
-      if (person.isChecked) {
-        labels.push(person.name)
-        data.push(person.counter)
-        backgroundColor.push(person.color)
-      }
-    })
 
+    if (storageData.length > 0) {
+      storageData.forEach((person) => {
+        for (let i:number = 0; i < person.counter; i++) {
+          toShuffleData.push({
+            temporaryLabel: person.name,
+            temporaryData: 1,
+            temporaryBackgroundColor: person.color
+          })
+        }
+      })
+    } else {
+      labels.push("Empty")
+      data.push(1)
+      backgroundColor.push("white")
+    }
+
+    let currentIndex = toShuffleData.length,  randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [toShuffleData[currentIndex], toShuffleData[randomIndex]] = [
+        toShuffleData[randomIndex], toShuffleData[currentIndex]];
+    }
+
+    for (let i:number = 0; i < toShuffleData.length; i++) {
+      labels.push(toShuffleData[i].temporaryLabel)
+      data.push(toShuffleData[i].temporaryData)
+      backgroundColor.push(toShuffleData[i].temporaryBackgroundColor)
+    }
+    
     setWheelState({
       labels,
       datasets: [{
@@ -53,7 +82,12 @@ export function Wheel() {
       >
         <Pie
           options={{
-            animation: {duration: 0},
+            elements: {
+              arc: {
+                  borderWidth: 0
+              }
+            },
+            animation: false,
             plugins: {
               legend: {
                 display: false

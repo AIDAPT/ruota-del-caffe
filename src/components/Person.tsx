@@ -2,6 +2,7 @@ import { Box, Checkbox, Stack, Typography } from "@mui/material";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 export type PersonProps = {
+    id: number,
     name: string,
     color: string,
     isChecked: boolean,
@@ -9,35 +10,50 @@ export type PersonProps = {
 }
 
 type PersonComponentProps = {
-    person: PersonProps
+    person: PersonProps,
+    checkPerson: (person: PersonProps) => void
+    deletePerson: (person: PersonProps) => void
 }
 
-export function PersonComponent({person}: PersonComponentProps) {
+export function PersonComponent({person, checkPerson, deletePerson}: PersonComponentProps) {
 
-    const checkPerson = () => void {
-         
-    };
+    const handleCheckboxOnChange = (_:any) => {
+        checkPerson(person)
+    }
 
-    const deletePerson = () => void {
-        
-    };
-
+    const handleDeleteOnClick = (_:any) => {
+        deletePerson(person)
+    }
+    
     return (
-        <Box>
-            <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Typography
-                    color={person.color}
-                    component="div"
-                    fontWeight="bold"
-                    fontSize="25px"
+        <Box
+            marginBottom="5px"
+            padding="6px"
+            sx={{
+                backgroundColor: "#CCB697",
+                borderRadius: "20px",
+            }}
+        >
+            <Stack direction={"row"} justifyContent={"flex-end"} >
+                <Box
                     width="100%"
-                    textAlign="center"
+                    alignItems="center"
+                    justifyContent="center"
+                    display="flex"
                 >
-                    {person.name} 
-                </Typography>
+                    <Typography
+                        color={person.color}
+                        fontWeight="bold"
+                        fontSize="25px"
+                        textAlign="center"
+                        marginTop="3px"
+                    >
+                        {person.name}
+                    </Typography>
+                </Box>
                 <Checkbox
                     checked={person.isChecked}
-                    onChange={checkPerson()}
+                    onChange={handleCheckboxOnChange}
                     sx={{
                         color: "#846842",
                         '& .MuiSvgIcon-root': { fontSize: 35 },
@@ -45,24 +61,39 @@ export function PersonComponent({person}: PersonComponentProps) {
                     }}
                 />
             </Stack>
-            <Stack direction={"row"} justifyContent={"space-between"}>
-                <Typography
-                    color="#846842"
-                    component="div"
-                    fontWeight="bold"
-                    fontSize="30px"
+            <Stack direction={"row"} justifyContent={"space-between"} >
+                <Box
                     width="100%"
-                    textAlign="center"
-                    sx={{
-                        backgroundColor: "white",
-                        borderRadius: "50px"
-                    }}
+                    alignItems="center"
+                    justifyContent="center"
+                    display="flex"
                 >
-                    {person.counter} 
-                </Typography>
-                <DeleteOutlineOutlinedIcon
-                    onClick={deletePerson()}
-                />
+                    <Typography
+                        color="#846842"
+                        fontWeight="bold"
+                        fontSize="30px"
+                        width="45px"
+                        textAlign="center"
+                        marginBottom="5px"
+                        sx={{
+                            backgroundColor: "white",
+                            borderRadius: "50px"
+                        }}
+                    >
+                        {person.counter} 
+                    </Typography>
+                </Box>
+                <Box
+                    onClick={handleDeleteOnClick}
+                >
+                    <DeleteOutlineOutlinedIcon
+                        sx={{
+                            color: "#846842",
+                            fontSize: "48px",
+                            marginRight: "3px"
+                        }}
+                    />
+                </Box>
             </Stack>
         </Box>
     );

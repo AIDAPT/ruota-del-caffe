@@ -6,29 +6,38 @@ import { StorageContextProvider } from "../contexts/StorageContext";
 export const MainPage = () => {
     return (
         <Box
-            alignItems="center"
+            display= "webkit-flex"
+            justify-content= "center"
+            webkit-align-items= "center"
+            webkit-box-align= "center"
         >
-            <Typography
-                component="div"
-                color="white"
-                fontWeight="bold"
-                fontSize="65px"
+            <Box
+            alignItems="center"
+            marginX="5px"
+            maxWidth="900px"
             >
-                La ruota del
-            </Typography>
-            <Typography
-                component="div"
-                color="#846842"
-                fontWeight="bold"
-                fontSize="150px"
-                marginTop="-60px"
-            >
-                Caffè
-            </Typography>
-            <StorageContextProvider>
-                <Wheel/>
-                <Partecipants/>
-            </StorageContextProvider>
+                <Typography
+                    component="div"
+                    color="white"
+                    fontWeight="bold"
+                    fontSize="65px"
+                >
+                    La ruota del
+                </Typography>
+                <Typography
+                    component="div"
+                    color="#846842"
+                    fontWeight="bold"
+                    fontSize="150px"
+                    marginTop="-60px"
+                >
+                    Caffè
+                </Typography>
+                <StorageContextProvider>
+                    <Wheel/>
+                    <Partecipants/>
+                </StorageContextProvider>
+            </Box>
         </Box>
     );
 }
