@@ -1,78 +1,74 @@
 import { Box, Grid, Skeleton, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { StorageContext, StorageDataProps } from "../contexts/StorageContext";
 import {PersonComponent, PersonProps} from "./Person";
 
 export default function Partecipants() {
 
-    const {set, get} = useContext(StorageContext)!
+    const {set, storageData} = useContext(StorageContext)!
 
-    //set([
-    //    {
-    //        id: 1,
-    //        name: "Lopre",
-    //        color: "white",
-    //        isChecked: true,
-    //        counter: 6,
-    //    },
-    //    {
-    //        id: 2,
-    //        name: "Fra",
-    //        color: "red",
-    //        isChecked: true,
-    //        counter: 3,
-    //    },
-    //    {
-    //        id: 3,
-    //        name: "Lollo",
-    //        color: "blue",
-    //        isChecked: true,
-    //        counter: 8,
-    //    },
-    //    {
-    //        id: 4,
-    //        name: "Ste",
-    //        color: "green",
-    //        isChecked: true,
-    //        counter: 1,
-    //    },
-    //    {
-    //        id: 5,
-    //        name: "KC",
-    //        color: "lightblue",
-    //        isChecked: true,
-    //        counter: 4,
-    //    }
-    //])
+    const hasInizialized = useRef(false)
+    useEffect(() => {
+        if(!hasInizialized.current) {
+            hasInizialized.current = true
+            set([
+                {
+                    id: 1,
+                    name: "Lopre",
+                    color: "white",
+                    isChecked: true,
+                    counter: 6,
+                },
+                {
+                    id: 2,
+                    name: "Fra",
+                    color: "red",
+                    isChecked: true,
+                    counter: 3,
+                },
+                {
+                    id: 3,
+                    name: "Lollo",
+                    color: "blue",
+                    isChecked: true,
+                    counter: 8,
+                },
+                {
+                    id: 4,
+                    name: "Ste",
+                    color: "green",
+                    isChecked: true,
+                    counter: 1,
+                },
+                {
+                    id: 5,
+                    name: "KC",
+                    color: "lightblue",
+                    isChecked: true,
+                    counter: 4,
+                }
+            ])
+        }
+    }, [hasInizialized.current])
 
-    const createNewPerson = () => void {
-        
+    const createNewPerson = (event: React.MouseEvent<HTMLElement>) => {
+        //TODO vedere modal fantacalcio CoachButton
     }
 
     const checkPerson = (person: PersonProps) => {
 
-        const updatedCheckState = get().map(object => {
-            if (object.id === person.id) {
-                return {
-                    ...object,
-                    isChecked: !person.isChecked
-                };
-            }
-            return object
-        })
-        set(updatedCheckState)
+        const items = storageData
+        console.log(items)
+        const idx = items.findIndex(p => p.id === person.id)
+        items[idx]!.isChecked = !person.isChecked
+        set(items)
 
     }
 
     const deletePerson = (person: PersonProps) => {
         
-        //const updateDeleteState = get()
-        //for (let i:number = 0; i<updateDeleteState.length; i++) {
-        //    if (updateDeleteState[i].id === person.id) {
-        //        updateDeleteState.splice(i, 1)
-        //    }
-        //}
-        //set(updateDeleteState)
+        const updateDeleteState = storageData.filter(p => p.id !== person.id)
+        set(updateDeleteState)
 
     }
 
@@ -107,21 +103,19 @@ export default function Partecipants() {
                     }}
                     container
                     gap={2}
-                    justifyContent="space-between"
+                    display="grid"
+                    gridTemplateColumns= {{
+                        md:"repeat(4, 1fr)",
+                        sm:"repeat(3, 1fr)",
+                        xs:"repeat(2, 1fr)"
+                    }}
                     alignContent={"flex-start"}
                 >
-                {get().length > 0
-                    ? get().map((globalState, idx) => {
+                    {storageData.map((globalState, idx) => {
                         return (
                             <Grid
                                 key={idx}
                                 sx={{
-                                maxWidth: {
-                                    xs: " calc(50% - 8px)",
-                                    sm: " calc(50% - 8px)",
-                                    md: " calc(25% - 16px)",
-                                    lg: " calc(25% - 16px)",
-                                },
                                 width: "100%",
                                 }}
                                 item
@@ -129,48 +123,29 @@ export default function Partecipants() {
                                 <PersonComponent person={globalState} checkPerson={checkPerson} deletePerson={deletePerson}/>
                             </Grid>
                         );
-                    })
-                    : Array(0)
-                        .fill("")
-                        .map((_, idx) => (
+                    })}
                     <Grid
-                        key={idx}
+                        key={-1}
                         sx={{
-                        maxWidth: {
-                            xs: " calc(50% - 8px)",
-                            sm: " calc(50% - 8px)",
-                            md: " calc(25% - 16px)",
-                            lg: " calc(25% - 16px)",
-                        },
-                        width: "100%",
-                        }}
-                        item
-                    >
-                        <Skeleton variant="rounded" height={105} />
-                    </Grid>
-                    ))}
-                    <Grid
-                        marginBottom="5px"
-                        display= "webkit-flex"
-                        justify-content= "center"
-                        webkit-align-items= "center"
-                        webkit-box-align= "center"
-                        sx={{
-                        maxWidth: {
-                            xs: " calc(50% - 8px)",
-                            sm: " calc(50% - 8px)",
-                            md: " calc(25% - 16px)",
-                            lg: " calc(25% - 16px)",
-                        },
-                        backgroundColor: "#CCB697",
-                        borderRadius: "20px",
-                        width: "100%",
-                        height: "117px"
+                            width: "100%",
                         }}
                         item
                     >
                         <Box
-                            onClick={createNewPerson()}
+                            onClick={createNewPerson}
+                            display= "webkit-flex"
+                            justify-content= "center"
+                            webkit-align-items= "center"
+                            webkit-box-align= "center"
+                            sx={{
+                                backgroundColor: "#CCB697",
+                                borderRadius: "20px",
+                                height: "117px",
+                                width: "100%",
+                                minWidth: "145px"
+                            }}
+                        >
+                            <Box
                             sx={{
                                 height: "90px",
                                 margin: "auto",
@@ -180,9 +155,10 @@ export default function Partecipants() {
                                 backgroundColor: "white",
                                 color: "#846842",
                                 textAlign: "center",
-                            }}
-                        >
-                            +
+                                }}
+                            >
+                                +
+                            </Box>
                         </Box>
                     </Grid>
                 </Grid>

@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { ChartDataset } from 'chart.js';
 import 'chart.js/auto';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import {Pie} from 'react-chartjs-2'
 import { StorageContext, StorageDataProps } from '../contexts/StorageContext';
 
@@ -18,21 +18,22 @@ type TemporaryData = {
 
 export function Wheel() {
 
-  const {set, get} = useContext(StorageContext)!
+  const {set, storageData} = useContext(StorageContext)!
+
   const [wheelState, setWheelState] = useState<WheelStateProps>({
     labels: [],
     datasets: []
   })
 
   useEffect(() => {
-    let storageData: StorageDataProps = get().filter(p => p.isChecked)
+    let _storageData: StorageDataProps = storageData?.filter(p => p.isChecked)
     let toShuffleData: TemporaryData[] = []
     let labels: string[] = []
     let data: number[] = []
     let backgroundColor: string[] = []
 
-    if (storageData.length > 0) {
-      storageData.forEach((person) => {
+    if (_storageData.length > 0) {
+      _storageData.forEach((person) => {
         for (let i:number = 0; i < person.counter; i++) {
           toShuffleData.push({
             temporaryLabel: person.name,
@@ -69,7 +70,7 @@ export function Wheel() {
       }]
     })
 
-  }, [get()])
+  }, [storageData])
 
   return (
     <Box

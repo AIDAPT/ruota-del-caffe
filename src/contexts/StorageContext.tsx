@@ -1,37 +1,41 @@
-import { createContext, useState } from "react"
+import { createContext, useEffect, useRef, useState } from "react"
 import { PersonProps } from "../components/Person";
 
 export type StorageDataProps = PersonProps[]
 
 type HookProps = {
     set: (data: StorageDataProps) => void,
-    get: () => StorageDataProps
+    storageData: StorageDataProps
 }
 
 export const StorageContext = createContext<HookProps | null>(null);
 
 const useStorageContext = (): HookProps => {
-    const [storageData, setStorageData] = useState<StorageDataProps | null>(null)
 
+    const hasInizialized = useRef(false)
+
+    const [storageData, setStorageData] = useState<StorageDataProps>([])
+    useEffect(() => {
+        if(!hasInizialized.current) {
+            hasInizialized.current = true
+            _initialize()
+        }
+    }, [hasInizialized.current])
     const set = (data: StorageDataProps) => {
         localStorage.setItem("localData", JSON.stringify(data))
-        setStorageData(data)
+        setStorageData((_) => [...data])
     }
 
-    const get = (): StorageDataProps => {
+    const _initialize = () => {
 
-        if (storageData) {return storageData}
-        else {
-            let item = localStorage.getItem("localData")
-            let _i = item?JSON.parse(item): []
-            set(_i)
-            return _i
-        }
+        let item = localStorage.getItem("localData")
+        let _i = item?JSON.parse(item): []
+        setStorageData((_) => [..._i])
     }
 
 
     return{
-        set, get
+        set, storageData
     }
 } 
 type StorageContainerProviderProps = {

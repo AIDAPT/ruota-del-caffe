@@ -28,10 +28,11 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
     return (
         <Box
             marginBottom="5px"
-            padding="6px"
+            paddingY="6px"
             sx={{
                 backgroundColor: "#CCB697",
                 borderRadius: "20px",
+                width: "100%"
             }}
         >
             <Stack direction={"row"} justifyContent={"flex-end"} >
@@ -98,6 +99,3 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
         </Box>
     );
 }
-
-//TODO funzione deselectPerson
-//TODO props e style mui components
