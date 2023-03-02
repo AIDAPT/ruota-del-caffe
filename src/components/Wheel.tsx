@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { ChartDataset } from 'chart.js';
+import { ChartDataset, Colors } from 'chart.js';
 import 'chart.js/auto';
 import { useContext, useEffect, useRef, useState } from 'react';
 import {Pie} from 'react-chartjs-2'
@@ -24,6 +24,15 @@ export function Wheel() {
     labels: [],
     datasets: []
   })
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.style.margin = 'auto';
+      canvasRef.current.style.display = 'block';
+    }
+  }, []);
 
   useEffect(() => {
     let _storageData: StorageDataProps = storageData?.filter(p => p.isChecked)
@@ -72,6 +81,10 @@ export function Wheel() {
 
   }, [storageData])
 
+  const rotateWheel = (_:any) => {
+    //TODO ultima cosa prima dei test
+  }
+
   return (
     <Box
       marginTop="-30px"
@@ -79,13 +92,16 @@ export function Wheel() {
       marginRight="10px"
     >
       <Box
-        marginBottom="-10px"
+        margin="auto"
+        position="relative"
       >
+        <canvas ref={canvasRef} style={{height: "1px"}}/>
         <Pie
           options={{
+            borderColor: "#CCB697",
             elements: {
               arc: {
-                  borderWidth: 0
+                  borderWidth: 2,
               }
             },
             animation: false,
@@ -98,43 +114,75 @@ export function Wheel() {
           data={wheelState}
           height="50%"
         ></Pie>
+        <div
+          onClick={rotateWheel}
+          className='playButton'
+          style={{
+            width: "75px",
+            height: "75px",
+            borderRadius: "50%",
+            backgroundColor: "#846842",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+          }}
+        >
+          <div
+            style={{
+              marginLeft: "8px",
+              borderTop: "20px solid transparent",
+              borderBottom: "20px solid transparent",
+              borderLeft: "35px solid #fff",
+              transform: "revert",
+            }}
+          >
+          </div>
+        </div>
       </Box>
       <Box
-        display= "webkit-flex"
-        justify-content= "center"
-        webkit-align-items= "center"
-        webkit-box-align= "center"
+        marginTop="-10px"
       >
         <Box
-            sx={{
-              width: 0,
-              height: 0,
-              borderLeft: "20px solid transparent",
-              borderRight: "20px solid transparent",
-              borderBottom: "20px solid white"
-            }}
-        ></Box>
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: "white"
-        }}
-        marginLeft="30px"
-        marginRight="30px"
-        color="white"
-        marginTop="15px"
-        borderRadius="50px"
-      >
-        <Typography
-          component="div"
-          color="black"
-          fontWeight="bold"
-          fontSize="25px"
-          margin="5px"
-          marginTop="-20px"
+          display= "webkit-flex"
+          justify-content= "center"
+          webkit-align-items= "center"
+          webkit-box-align= "center"
+          position="sticky"
         >
-          Ciao
-        </Typography>
+          <Box
+              sx={{
+                width: 0,
+                height: 0,
+                borderLeft: "20px solid transparent",
+                borderRight: "20px solid transparent",
+                borderBottom: "20px solid white"
+              }}
+          ></Box>
+        </Box>
+        <Box
+          sx={{
+            backgroundColor: "white"
+          }}
+          marginLeft="30px"
+          marginRight="30px"
+          color="white"
+          marginTop="15px"
+          borderRadius="50px"
+        >
+          <Typography
+            component="div"
+            color="black"
+            fontWeight="bold"
+            fontSize="25px"
+            margin="5px"
+            marginTop="-20px"
+          >
+            Ciao
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

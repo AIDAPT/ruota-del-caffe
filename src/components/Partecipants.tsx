@@ -1,58 +1,106 @@
-import { Box, Grid, Skeleton, Typography } from "@mui/material";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Skeleton, TextField, Typography } from "@mui/material";
+import { ChangeEvent, ChangeEventHandler, useContext, useEffect, useRef, useState } from "react";
 import { StorageContext, StorageDataProps } from "../contexts/StorageContext";
 import {PersonComponent, PersonProps} from "./Person";
+
+type NewPersonProps = {
+    formName: string,
+    formCounter: number,
+}
 
 export default function Partecipants() {
 
     const {set, storageData} = useContext(StorageContext)!
+    const [open, setOpen] = useState<boolean>(false)
+    const [newPerson, setNewPerson] = useState<NewPersonProps>({
+        formName: "",
+        formCounter: 0,
+    })
 
-    const hasInizialized = useRef(false)
-    useEffect(() => {
-        if(!hasInizialized.current) {
-            hasInizialized.current = true
-            set([
-                {
-                    id: 1,
-                    name: "Lopre",
-                    color: "white",
-                    isChecked: true,
-                    counter: 6,
-                },
-                {
-                    id: 2,
-                    name: "Fra",
-                    color: "red",
-                    isChecked: true,
-                    counter: 3,
-                },
-                {
-                    id: 3,
-                    name: "Lollo",
-                    color: "blue",
-                    isChecked: true,
-                    counter: 8,
-                },
-                {
-                    id: 4,
-                    name: "Ste",
-                    color: "green",
-                    isChecked: true,
-                    counter: 1,
-                },
-                {
-                    id: 5,
-                    name: "KC",
-                    color: "lightblue",
-                    isChecked: true,
-                    counter: 4,
+    const handleDialogOpen = (_:any) => {
+        setOpen(() => true)
+    }
+
+    const handleDialogClose = (_:any) => {
+        setOpen(() =>false)
+        setNewPerson({
+            formName: "",
+            formCounter: 0
+        })
+    }
+
+    const createNewPerson = (_:any)  => {
+        
+        if ((newPerson.formCounter !== 0) && (newPerson.formName !== "") && (storageData.length < 12)) {
+            const updateNewPerson: PersonProps = {
+                id: 0,
+                name: newPerson.formName,
+                color: "",
+                isChecked: true,
+                counter: newPerson.formCounter,
+            }
+            let temporaryStorageData: StorageDataProps = storageData
+    
+            temporaryStorageData.sort((a: PersonProps, b: PersonProps) => a.id - b.id)
+            for (let i:number = 0; i< temporaryStorageData.length; i++) {
+                if (i !== temporaryStorageData[i].id) {
+                    updateNewPerson.id = i
+                    break
+                } else {
+                    updateNewPerson.id = temporaryStorageData.length
                 }
-            ])
+            }
+    
+            temporaryStorageData.push(updateNewPerson)
+            const startColor = Math.floor(Math.random() * 12)
+            const colors: string[] = [
+                "#fff44f",
+                "#ff5e00",
+                "#b0ff00",
+                "#ff1493",
+                "#b4009e",
+                "#87ceeb",
+                "#40e0d0",
+                "#ff00ff",
+                "#ff4040",
+                "#00ff00",
+                "#0000ff",
+                "#e0115f"
+              ]
+            for (let i:number = 0; i<temporaryStorageData.length; i++) {
+                let indexColor = startColor + i
+                if(indexColor > 12) {
+                    indexColor -= 12
+                }
+                temporaryStorageData[i].color = colors[indexColor]
+            }
+            
+            set(temporaryStorageData)
+            setOpen(() =>false)
+            setNewPerson({
+                formName: "",
+                formCounter: 0
+            })
         }
-    }, [hasInizialized.current])
 
-    const createNewPerson = (event: React.MouseEvent<HTMLElement>) => {
-        //TODO vedere modal fantacalcio CoachButton
+    }
+
+    const handleOnChangeName = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        if (String(event.target.value).length < 6) {
+            setNewPerson((prevData) => ({
+                ...prevData,
+                formName: event.target.value
+            }))
+        }
+    }
+
+    const handleOnChangeCounter = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        if (Number(event.target.value) < 16) {
+            setNewPerson((prevData) => ({
+                ...prevData,
+                formCounter: Number(event.target.value)
+            }))
+        }
     }
 
     const checkPerson = (person: PersonProps) => {
@@ -132,7 +180,7 @@ export default function Partecipants() {
                         item
                     >
                         <Box
-                            onClick={createNewPerson}
+                            onClick={handleDialogOpen}
                             display= "webkit-flex"
                             justify-content= "center"
                             webkit-align-items= "center"
@@ -159,6 +207,43 @@ export default function Partecipants() {
                             >
                                 +
                             </Box>
+                            <Dialog 
+                                open={open} 
+                                onClose={handleDialogClose}
+                                sx={{
+                                    width: "100%",
+                                    maxWidth: "300px"
+                                }}
+                            > 
+                                <DialogContent>
+                                    <TextField
+                                        required
+                                        margin="dense"
+                                        id="filled-required"
+                                        label="Nome"
+                                        helperText="Massimo 5 lettere"
+                                        type="text"
+                                        fullWidth
+                                        variant="filled"
+                                        onChange={handleOnChangeName}
+                                    />
+                                    <TextField
+                                        required
+                                        margin="dense"
+                                        id="filled-required"
+                                        label="Probabilità"
+                                        helperText="Max 15"
+                                        type="number"
+                                        fullWidth
+                                        variant="filled"
+                                        onChange={handleOnChangeCounter}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleDialogClose}>Annulla</Button>
+                                    <Button onClick={createNewPerson}>Aggiungi</Button>
+                                </DialogActions>
+                            </Dialog>
                         </Box>
                     </Grid>
                 </Grid>
@@ -166,3 +251,5 @@ export default function Partecipants() {
         </Box>
     );
 }
+
+//TODO la dialog non si chiude

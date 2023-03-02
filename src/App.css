@@ -4,4 +4,6 @@
   font-family: 'Roboto Mono', monospace;
 }
 
-
+.playButton {
+  transform: translate(-50%, -50%)
+}

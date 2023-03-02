@@ -41,6 +41,7 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
                     alignItems="center"
                     justifyContent="center"
                     display="flex"
+                    marginLeft="10px"
                 >
                     <Typography
                         color={person.color}
@@ -48,6 +49,7 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
                         fontSize="25px"
                         textAlign="center"
                         marginTop="3px"
+                        marginX="0px"
                     >
                         {person.name}
                     </Typography>
@@ -68,6 +70,7 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
                     alignItems="center"
                     justifyContent="center"
                     display="flex"
+                    marginLeft="10px"
                 >
                     <Typography
                         color="#846842"
