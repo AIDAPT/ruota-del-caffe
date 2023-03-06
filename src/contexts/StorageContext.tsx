@@ -20,7 +20,7 @@ const useStorageContext = (): HookProps => {
             hasInizialized.current = true
             _initialize()
         }
-    }, [hasInizialized.current])
+    }, [hasInizialized])
     const set = (data: StorageDataProps) => {
         localStorage.setItem("localData", JSON.stringify(data))
         setStorageData((_) => [...data])

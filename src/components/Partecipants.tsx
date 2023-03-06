@@ -1,11 +1,11 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Skeleton, TextField, Typography } from "@mui/material";
-import { ChangeEvent, ChangeEventHandler, useContext, useEffect, useRef, useState } from "react";
+import { Box, Button, Dialog, DialogActions, DialogContent, Grid, TextField, Typography } from "@mui/material";
+import { ChangeEvent, useContext, useState } from "react";
 import { StorageContext, StorageDataProps } from "../contexts/StorageContext";
 import {PersonComponent, PersonProps} from "./Person";
 
 type NewPersonProps = {
     formName: string,
-    formCounter: number,
+    formCounter: number | undefined,
 }
 
 export default function Partecipants() {
@@ -14,7 +14,7 @@ export default function Partecipants() {
     const [open, setOpen] = useState<boolean>(false)
     const [newPerson, setNewPerson] = useState<NewPersonProps>({
         formName: "",
-        formCounter: 0,
+        formCounter: undefined,
     })
 
     const handleDialogOpen = (_:any) => {
@@ -25,13 +25,14 @@ export default function Partecipants() {
         setOpen(() =>false)
         setNewPerson({
             formName: "",
-            formCounter: 0
+            formCounter: undefined
         })
     }
 
     const createNewPerson = (_:any)  => {
         
-        if ((newPerson.formCounter !== 0) && (newPerson.formName !== "") && (storageData.length < 12)) {
+        if ((newPerson.formCounter) && (newPerson.formName !== "") && (storageData.length < 12)) {
+
             const updateNewPerson: PersonProps = {
                 id: 0,
                 name: newPerson.formName,
@@ -69,9 +70,7 @@ export default function Partecipants() {
               ]
             for (let i:number = 0; i<temporaryStorageData.length; i++) {
                 let indexColor = startColor + i
-                if(indexColor > 12) {
-                    indexColor -= 12
-                }
+                indexColor %= 12
                 temporaryStorageData[i].color = colors[indexColor]
             }
             
@@ -79,14 +78,15 @@ export default function Partecipants() {
             setOpen(() =>false)
             setNewPerson({
                 formName: "",
-                formCounter: 0
+                formCounter: undefined
             })
         }
 
     }
 
     const handleOnChangeName = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-        if (String(event.target.value).length < 6) {
+        
+        if (event.target.value.length < 6) {
             setNewPerson((prevData) => ({
                 ...prevData,
                 formName: event.target.value
@@ -95,7 +95,7 @@ export default function Partecipants() {
     }
 
     const handleOnChangeCounter = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-        if (Number(event.target.value) < 16) {
+        if (Number(event.target.value) < 31) {
             setNewPerson((prevData) => ({
                 ...prevData,
                 formCounter: Number(event.target.value)
@@ -106,7 +106,6 @@ export default function Partecipants() {
     const checkPerson = (person: PersonProps) => {
 
         const items = storageData
-        console.log(items)
         const idx = items.findIndex(p => p.id === person.id)
         items[idx]!.isChecked = !person.isChecked
         set(items)
@@ -172,7 +171,7 @@ export default function Partecipants() {
                             </Grid>
                         );
                     })}
-                    <Grid
+                    {storageData.length < 12 ? (<Grid
                         key={-1}
                         sx={{
                             width: "100%",
@@ -207,49 +206,53 @@ export default function Partecipants() {
                             >
                                 +
                             </Box>
-                            <Dialog 
-                                open={open} 
-                                onClose={handleDialogClose}
-                                sx={{
-                                    width: "100%",
-                                    maxWidth: "300px"
-                                }}
-                            > 
-                                <DialogContent>
-                                    <TextField
-                                        required
-                                        margin="dense"
-                                        id="filled-required"
-                                        label="Nome"
-                                        helperText="Massimo 5 lettere"
-                                        type="text"
-                                        fullWidth
-                                        variant="filled"
-                                        onChange={handleOnChangeName}
-                                    />
-                                    <TextField
-                                        required
-                                        margin="dense"
-                                        id="filled-required"
-                                        label="Probabilità"
-                                        helperText="Max 15"
-                                        type="number"
-                                        fullWidth
-                                        variant="filled"
-                                        onChange={handleOnChangeCounter}
-                                    />
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleDialogClose}>Annulla</Button>
-                                    <Button onClick={createNewPerson}>Aggiungi</Button>
-                                </DialogActions>
-                            </Dialog>
                         </Box>
-                    </Grid>
+                    </Grid>): null}
                 </Grid>
             </Box>
+            <Dialog 
+                open={open} 
+                onClose={handleDialogClose}
+                sx={{
+                    width: "100%",
+                    maxWidth: "300px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto"
+                }}
+            > 
+                <DialogContent>
+                    <TextField
+                        required
+                        margin="dense"
+                        id="filled-required"
+                        label="Nome"
+                        type="text"
+                        fullWidth
+                        variant="filled"
+                        helperText="Massimo 5 lettere"
+                        value={newPerson.formName}
+                        onChange={handleOnChangeName}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="filled-required"
+                        label="Probabilità"
+                        type="number"
+                        fullWidth
+                        variant="filled"
+                        helperText="Max 30"
+                        value={newPerson.formCounter}
+                        onChange={handleOnChangeCounter}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Annulla</Button>
+                    <Button onClick={createNewPerson}>Aggiungi</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
-
-//TODO la dialog non si chiude
