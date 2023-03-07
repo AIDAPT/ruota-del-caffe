@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, Grid, TextField, Typography } from "@mui/material";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import { StorageContext, StorageDataProps } from "../contexts/StorageContext";
 import {PersonComponent, PersonProps} from "./Person";
 
@@ -28,6 +28,14 @@ export default function Partecipants() {
             formCounter: undefined
         })
     }
+
+    //const hasInizialized = useRef(false)
+    //useEffect(() => {
+    //    if(!hasInizialized.current) {
+    //        hasInizialized.current = true
+    //        set([{"id":0,"name":"Fra","color":"#ff1493","isChecked":true,"counter":1},{"id":1,"name":"KC","color":"#b4009e","isChecked":true,"counter":4},{"id":2,"name":"Ste","color":"#87ceeb","isChecked":true,"counter":4},{"id":3,"name":"Lollo","color":"#40e0d0","isChecked":false,"counter":1},{"id":4,"name":"Da","color":"#ff00ff","isChecked":true,"counter":4}])
+    //    }
+    //}, [hasInizialized.current])
 
     const createNewPerson = (_:any)  => {
         
