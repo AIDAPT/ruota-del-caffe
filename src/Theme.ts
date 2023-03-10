@@ -3,12 +3,28 @@ import { createTheme } from "@mui/material/styles";
 export const theme = createTheme({
   components: {
   },
+  typography: {
+    h1: {
+      color: "#846842",
+      fontWeight: "bold",
+      fontSize: "150px"
+    },
+    h2: {
+      color: "white",
+      fontWeight: "bold",
+      fontSize: "65px"
+    },
+    h3: {
+      
+    },
+    h4: {
+      
+    }
+  },
   palette: {
     background: {},
     primary: {
-      light: "#ffffff",
       main: "#ccb697",
-      dark: "#000000",
     },
     error: {
       main: "#FF1616",
@@ -16,5 +32,8 @@ export const theme = createTheme({
     secondary: {
       main: "#846842",
     },
+    common: {
+      white: "#ffffff"
+    }
   },
 });

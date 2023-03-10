@@ -1,5 +1,5 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, Grid, TextField, Typography } from "@mui/material";
-import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Stack, TextField, Typography } from "@mui/material";
+import { ChangeEvent, useContext, useState } from "react";
 import { StorageContext, StorageDataProps } from "../contexts/StorageContext";
 import {PersonComponent, PersonProps} from "./Person";
 
@@ -8,10 +8,12 @@ type NewPersonProps = {
     formCounter: number | undefined,
 }
 
-export default function Partecipants() {
+export function Partecipants() {
 
     const {set, storageData} = useContext(StorageContext)!
+
     const [open, setOpen] = useState<boolean>(false)
+
     const [newPerson, setNewPerson] = useState<NewPersonProps>({
         formName: "",
         formCounter: undefined,
@@ -28,14 +30,6 @@ export default function Partecipants() {
             formCounter: undefined
         })
     }
-
-    //const hasInizialized = useRef(false)
-    //useEffect(() => {
-    //    if(!hasInizialized.current) {
-    //        hasInizialized.current = true
-    //        set([{"id":0,"name":"Fra","color":"#ff1493","isChecked":true,"counter":1},{"id":1,"name":"KC","color":"#b4009e","isChecked":true,"counter":4},{"id":2,"name":"Ste","color":"#87ceeb","isChecked":true,"counter":4},{"id":3,"name":"Lollo","color":"#40e0d0","isChecked":false,"counter":1},{"id":4,"name":"Da","color":"#ff00ff","isChecked":true,"counter":4}])
-    //    }
-    //}, [hasInizialized.current])
 
     const createNewPerson = (_:any)  => {
         
@@ -130,8 +124,6 @@ export default function Partecipants() {
     return (
         <Box
             margin="15px"
-            marginY="20px"
-            marginBottom="20px"
             paddingBottom="15px"
             sx={{
                 backgroundColor: "white",
@@ -139,7 +131,6 @@ export default function Partecipants() {
             }}
         >
             <Typography
-                component="div"
                 color="#846842"
                 fontWeight="bold"
                 fontSize="40px"
@@ -186,12 +177,10 @@ export default function Partecipants() {
                         }}
                         item
                     >
-                        <Box
+                        <Stack
                             onClick={handleDialogOpen}
-                            display= "webkit-flex"
-                            justify-content= "center"
-                            webkit-align-items= "center"
-                            webkit-box-align= "center"
+                            justifyContent= "center"
+                            alignItems="center"
                             sx={{
                                 backgroundColor: "#CCB697",
                                 borderRadius: "20px",
@@ -214,7 +203,7 @@ export default function Partecipants() {
                             >
                                 +
                             </Box>
-                        </Box>
+                        </Stack>
                     </Grid>): null}
                 </Grid>
             </Box>

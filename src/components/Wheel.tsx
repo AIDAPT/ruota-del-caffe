@@ -1,8 +1,8 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { ChartDataset} from 'chart.js';
 import 'chart.js/auto';
 import { useContext, useEffect, useRef, useState } from 'react';
-import {Pie} from 'react-chartjs-2'
+import { Pie } from 'react-chartjs-2'
 import { animated, useSpring } from 'react-spring';
 import { StorageContext, StorageDataProps } from '../contexts/StorageContext';
 
@@ -20,8 +20,7 @@ type TemporaryData = {
   temporaryId: number,
 }
 
-type RotationProps = {
-  isOnRotation: boolean,
+type WinnerProps = {
   winnerName: string,
   winnerColor: string,
   winnerId: number,
@@ -38,34 +37,16 @@ export function Wheel() {
 
   const [explodedData, setExplodedData] = useState<TemporaryData[]>([])
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [winner, setWinner] = useState<WinnerProps | null>(null)
 
-  const [rotation, setRotation] = useState<RotationProps>({
-    isOnRotation: false,
-    winnerName: "Chi verrà estratto?",
-    winnerColor: "#846842",
-    winnerId: -1,
-  })
+  const [animationData, setAnimationData] = useState<StorageDataProps>(storageData)
+
+  const [isOnRotation, setIsOnRotation] = useState<boolean>(false)
 
   const [spring, setSpring] = useSpring(() => ({
     to: {rotate: 0},
     config: {mass:2, tension:150, friction:50},
   }))
-
-  const delay = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.style.margin = 'auto';
-      canvasRef.current.style.display = 'block';
-    }
-  }, []);
-
-  useEffect(() => {
-    
-  }, [rotation])
 
   useEffect(() => {
 
@@ -113,34 +94,31 @@ export function Wheel() {
       toShuffleData[i].minDegree = (i*degreeInterval)
       toShuffleData[i].maxDegree = (i*degreeInterval) + degreeInterval
     }
-
-    setExplodedData(toShuffleData)
     
-    setWheelState({
+    setExplodedData(() => [...toShuffleData])
+    
+    setWheelState(() => ({
       labels,
       datasets: [{
         data,
         backgroundColor
       }]
-    })
+    }))
 
   }, [storageData])
 
+  const delay = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
   const rotateWheel = async (_:any) => {
 
-    if (rotation.isOnRotation || storageData.length === 0) {
+    if (isOnRotation || storageData.length === 0) {
       return
     }
 
-    setRotation((prevRotation) => ({
-      ...prevRotation,
-      isOnRotation: true,
-      winnerName: "Chi verrà estratto?",
-      winnerColor: "#846842",
-    }))
-
-    setSpring({rotate: 0})
-    await delay(1000)
+    setIsOnRotation(true)
+    setWinner(null)
 
     let finalDegree: number = Math.random() * 360;
     let realDigree: number = 0
@@ -151,50 +129,42 @@ export function Wheel() {
       realDigree = 360 - (finalDegree - 180)
     }
 
-    let forWinnerName: string = ""
-    let forWinnerColor: string = ""
-    let forWinnerId: number = -1
-    for (let i:number = 0; i<explodedData.length; i++) {
-      if (realDigree > explodedData[i].minDegree && realDigree <= explodedData[i].maxDegree) {
-        forWinnerColor = explodedData[i].temporaryBackgroundColor
-        forWinnerName = explodedData[i].temporaryLabel
-        forWinnerId = explodedData[i].temporaryId
-      }
-    }
-  
-    setSpring({to: {rotate: finalDegree + 10800}, onRest: () => {
-      setRotation((prevRotation) => ({
-        ...prevRotation,
-        winnerName: forWinnerName,
-        winnerColor: forWinnerColor,
-        winnerId: forWinnerId,
-      }))
-    }})
+    const winnerPerson = explodedData.find(p => realDigree > p.minDegree && realDigree <= p.maxDegree)!
 
     let temporaryData: StorageDataProps = storageData
     let checkedPartecipants: StorageDataProps = storageData?.filter(p => p.isChecked)
 
     for (let i:number = 0; i<temporaryData.length; i++) {
-      if (forWinnerId === temporaryData[i].id) {
+      if (winnerPerson.temporaryId === temporaryData[i].id) {
           temporaryData[i].counter = 1
-      } else if (forWinnerId !== temporaryData[i].id && temporaryData[i].isChecked) {
+      } else if (winnerPerson.temporaryId !== temporaryData[i].id && temporaryData[i].isChecked) {
         temporaryData[i].counter += (checkedPartecipants.length - 1)
         if (temporaryData[i].counter > 30) {
           temporaryData[i].counter = 30
         }
       }
     }
+  
+    setSpring({from: {rotate: 0}, to: {rotate: finalDegree + 10800}, onRest: () => {
+      setWinner(() => ({
+        winnerName: winnerPerson.temporaryLabel,
+        winnerColor: winnerPerson.temporaryBackgroundColor,
+        winnerId: winnerPerson.temporaryId
+      }))
+      setAnimationData(temporaryData)
+    }})
+  }
 
-    await delay(7500)
+  const saveData = (_:any) => {
+    setWinner(null)
+    set(animationData)
+    setIsOnRotation(false)
+  }
 
-    set(temporaryData)
-    setRotation((prevRotation) => ({
-      ...prevRotation,
-      isOnRotation: false,
-      winnerName: "Chi verrà estratto?",
-      winnerColor: "#846842",
-    }))
-
+  const discardData = (_:any) => {
+    setWinner(null)
+    setIsOnRotation(false)
+    window.location.reload()
   }
 
   return (
@@ -210,7 +180,6 @@ export function Wheel() {
         <animated.div
           style={{transform: spring.rotate.to((r:number) => `rotate(${r}deg)`)}}
         >
-          <canvas ref={canvasRef} style={{height: "1px"}}/>
           <Pie
             options={{
               borderColor: "#CCB697",
@@ -290,15 +259,40 @@ export function Wheel() {
         >
           <Typography
             component="div"
-            color={rotation.winnerColor}
+            color={winner?.winnerColor || "#846842"}
             fontWeight="bold"
             fontSize="25px"
             margin="5px"
             marginTop="-20px"
           >
-            {rotation.winnerName}
+            {winner?.winnerName || "Chi verrà estratto?"}
           </Typography>
         </Box>
+        {!!winner ? 
+          (<Stack
+            direction="row"
+            justifyContent="space-around"
+            color="#846842"
+            marginTop="10px"
+          >
+            <Box
+              onClick={discardData}
+              border="1px solid #846842"
+              borderRadius="50px"
+              padding="7px"
+            >
+              Annulla
+            </Box>
+            <Box
+              onClick={saveData}
+              border="1px solid #846842"
+              borderRadius="50px"
+              padding="7px"
+            >
+              Aggiorna i Dati
+            </Box>
+          </Stack>): null
+        }
       </Box>
     </Box>
   );

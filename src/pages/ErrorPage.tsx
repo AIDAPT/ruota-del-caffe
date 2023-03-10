@@ -11,7 +11,7 @@ export const ErrorPage = () => {
           alignItems: "center",
           flexDirection: "column",
           minHeight: "100vh",
-          backgroundColor: "#661392",
+          backgroundColor: "#CCB697",
         }}
       >
         <Typography variant="h3" style={{ color: "white" }}>
@@ -22,7 +22,7 @@ export const ErrorPage = () => {
         </Typography>
         <Button
           sx={{
-            border: "3px solid #db00ff",
+            border: "3px solid #846842",
             textDecoration: "none",
             padding: "5px",
             borderRadius: "5px",
