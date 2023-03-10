@@ -131,10 +131,8 @@ export function Partecipants() {
             }}
         >
             <Typography
-                color="#846842"
-                fontWeight="bold"
-                fontSize="40px"
-                marginBottom="5px"
+                variant="h3"
+                marginY="10px"
             >
                 Partecipanti
             </Typography>

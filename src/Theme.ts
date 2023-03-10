@@ -15,10 +15,22 @@ export const theme = createTheme({
       fontSize: "65px"
     },
     h3: {
-      
+      color:"#846842",
+      fontWeight:"bold",
+      fontSize:"40px"
     },
     h4: {
-      
+      fontWeight:"bold",
+      fontSize:"25px"
+    },
+    h5: {
+      fontWeight:"bold",
+      fontSize:"25px"
+    },
+    body1: {
+      color:"#846842",
+      fontWeight:"bold",
+      fontSize:"30px"
     }
   },
   palette: {

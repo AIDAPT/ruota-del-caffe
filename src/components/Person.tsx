@@ -45,8 +45,7 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
                 >
                     <Typography
                         color={person.color}
-                        fontWeight="bold"
-                        fontSize="25px"
+                        variant="h5"
                         textAlign="center"
                         marginTop="3px"
                         marginX="0px"
@@ -73,9 +72,7 @@ export function PersonComponent({person, checkPerson, deletePerson}: PersonCompo
                     marginLeft="10px"
                 >
                     <Typography
-                        color="#846842"
-                        fontWeight="bold"
-                        fontSize="30px"
+                        variant="body1"
                         width="45px"
                         textAlign="center"
                         marginBottom="5px"

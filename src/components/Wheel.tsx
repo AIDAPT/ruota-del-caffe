@@ -107,10 +107,6 @@ export function Wheel() {
 
   }, [storageData])
 
-  const delay = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
   const rotateWheel = async (_:any) => {
 
     if (isOnRotation || storageData.length === 0) {
@@ -258,10 +254,8 @@ export function Wheel() {
           borderRadius="50px"
         >
           <Typography
-            component="div"
             color={winner?.winnerColor || "#846842"}
-            fontWeight="bold"
-            fontSize="25px"
+            variant="h4"
             margin="5px"
             marginTop="-20px"
           >

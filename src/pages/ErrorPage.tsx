@@ -23,6 +23,7 @@ export const ErrorPage = () => {
         <Button
           sx={{
             border: "3px solid #846842",
+            color: "#846842",
             textDecoration: "none",
             padding: "5px",
             borderRadius: "5px",
