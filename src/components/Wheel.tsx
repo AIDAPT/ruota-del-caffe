@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { ChartDataset} from 'chart.js';
 import 'chart.js/auto';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2'
 import { animated, useSpring } from 'react-spring';
 import { StorageContext, StorageDataProps } from '../contexts/StorageContext';
