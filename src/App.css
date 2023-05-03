@@ -2,6 +2,11 @@
   text-align: center;
   background-color: #CCB697;
   font-family: 'Roboto Mono', monospace;
+  min-height: 100vh;
+}
+
+html {
+  background-color: #CCB697;
 }
 
 .playButton {
